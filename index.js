@@ -87,11 +87,9 @@ SwaggerRouter.prototype.process = function (event) {
     let cls;
     try {
       const classname = "" + controller;
-      console.log("loading controller! " + classname);
       cls = require(`../../controllers/${controller}`);
     }
     catch(e) {
-      console.log(e);
       respondWith(resolve, 400, {
         code: 400,
         message: "class " + controller + " not found"
@@ -105,7 +103,6 @@ SwaggerRouter.prototype.process = function (event) {
       });
       return;
     }
-    console.log("calling the function");
     cls[operationId](args)
       .then(response => {
         resolve(response);
