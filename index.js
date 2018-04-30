@@ -88,7 +88,7 @@ SwaggerRouter.prototype.process = function (event) {
     try {
       const classname = "" + controller;
       console.log("loading controller! " + classname);
-      cls = require(`../${controller}`);
+      cls = require(`./${controller}`);
     }
     catch(e) {
       console.log(e);
