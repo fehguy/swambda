@@ -4,9 +4,14 @@ const SwaggerParser = require("swagger-parser");
 const Router = require("swagger-router").Router;
 const utils = require("./utils");
 
-module.exports.load = (file) => {
+module.exports.load = (path) => {
   return new Promise((resolve, reject) => {
-    SwaggerParser.validate(file)
+    let spec;
+    if(typeof file === "object") {
+      path = undefined;
+      spec = file;
+    }
+    SwaggerParser.validate(path, spec)
       .then(api => {
         let r = new SwaggerRouter();
         r.spec = api;
