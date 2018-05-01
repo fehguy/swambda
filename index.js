@@ -67,21 +67,42 @@ SwaggerRouter.prototype.process = function (event) {
       return;
     }
     const route = this.router.lookup(path);
-    const operation = route.value[httpMethod];
     if(!route) {
       respondWith(resolve, 404, {
-        statusCode: 404,
-        body: {
-          code: 404,
-          message: "path " + path + " not found"
-        }});
-        return;
+        code: 404,
+        message: "path " + path + " not found"
+      });
+      return;
+    }
+    const operation = route.value[httpMethod];
+    if(!operation) {
+      respondWith(resolve, 404, {
+        code: 404,
+        message: "operation `" + httpMethod + "` not found"
+      });
+      return;
     }
 
     const params = {};
     const args = {};
     const controller = operation["x-swagger-router-controller"];
+    if(!controller) {
+      respondWith(resolve, 404, {
+        code: 404,
+        message: "controller `" + controller + "` not found"
+      });
+      return;
+    }
     const operationId = operation.operationId;
+    if(!operationId) {
+      respondWith(resolve, 404, {
+        statusCode: 404,
+        body: {
+          code: 404,
+          message: "operationId `" + operationId + "` not found"
+        }});
+        return;
+    }
     (operation.parameters || [])
       .map((param) => {
         if(param.in === "path") {
