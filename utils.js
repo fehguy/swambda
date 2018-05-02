@@ -3,13 +3,13 @@
 global.respondWith = function (resolve, code, body) {
   const response = {
     statusCode: code,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Allow": "OPTIONS,HEAD,DELETE,POST,GET",
-      "Access-Control-Allow-Methods": "GET, POST, DELETE, PUT",
-      "Access-Control-Allow-Headers": "Content-Type, api_key, Authorization"
-    }
+    headers: {}
   };
+  if(global.extraHeaders) {
+    Object.keys(extraHeaders).forEach((key) => {
+      response.headers[key] = global.extraHeaders[key];
+    });
+  }
 
   if(typeof body !== "undefined") {
     if(typeof body === "object") {
@@ -23,5 +23,14 @@ global.respondWith = function (resolve, code, body) {
   else {
     response.body = "";
   }
-  resolve(response);
+  if(global.postProcessor && typeof global.postProcessor === "function") {
+    global.postProcessor(response)
+      .then((res) => {
+        resolve(res);
+      }
+    )
+  }
+  else {
+    resolve(response);
+  }
 };

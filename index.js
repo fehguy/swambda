@@ -4,50 +4,92 @@ const SwaggerParser = require("swagger-parser");
 const Router = require("swagger-router").Router;
 const utils = require("./utils");
 
-module.exports.load = (callingPath, path) => {
+global.Swambda = class Swambda {
+  constructor(prefix) {
+    this.prefix = prefix;
+  }
+}
+
+Swambda.prototype.spec = function (specLocator) {
+  this.specLocator = specLocator;
+  return this;
+};
+
+Swambda.prototype.pathPrefix = function (prefix) {
+  this.prefix = prefix;
+  return this;
+};
+
+Swambda.prototype.preProcessor = function (preProcessor) {
+  this.preProcessor = preProcessor;
+  return this;
+}
+
+Swambda.prototype.postProcessor = function (postProcessor) {
+  global.postProcessor = postProcessor;
+  return this;
+}
+
+Swambda.prototype.cors = function (extra) {
+  const headers = extra || {};
+  if(!headers["Access-Control-Allow-Origin"]) {
+    headers["Access-Control-Allow-Origin"] = "*";
+  }
+  if(!headers["Allow"]) {
+    headers["Allow"] = "OPTIONS,HEAD,DELETE,POST,GET";
+  }
+  if(!headers["Access-Control-Allow-Methods"]) {
+    headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, PUT";
+  }
+  if(!headers["Access-Control-Allow-Headers"]) {
+    headers["Access-Control-Allow-Headers"] = "Content-Type, api_key, Authorization";
+  }
+  global.extraHeaders = extra || {};
+  return this;
+}
+
+Swambda.prototype.load = function () {
   return new Promise((resolve, reject) => {
     if(global.router) {
       resolve(global.router);
       return;
     }
-    let spec;
-    if(typeof file === "object") {
+    let path;
+    if(typeof this.specLocator === "object") {
+      this.spec = path;
       path = undefined;
-      spec = file;
     }
-    SwaggerParser.validate(path, spec)
+    else {
+      this.spec = require("yml-loader!../../swagger.yaml");
+    }
+
+    const self = this;
+    SwaggerParser.validate(this.spec)
       .then(api => {
-        let moduleName = callingPath.substring(callingPath.indexOf("/.netlify/functions/"))
+        let moduleName = this.prefix.substring(this.prefix.indexOf("/.netlify/functions/"))
           .substring("/.netlify/functions/".length).split("/")[0];
 
-        if(callingPath.startsWith("/" + moduleName)) {
+        if(self.prefix.startsWith("/" + moduleName)) {
           api.basePath = "/" + moduleName + "/.netlify/functions/" + moduleName;
         }
         else {
           api.basePath = "/.netlify/functions/" + moduleName;
         }
 
-        let r = new SwaggerRouter();
-        r.spec = api;
         const router = new Router();
-        router.setTree(router.specToTree(r.spec));
-        r.router = router;
+        router.setTree(router.specToTree(api));
+        self.router = router;
 
-        global.router = r;
-        resolve(r);
+        // global.router = router;
+        resolve(self);
       });
   });
 }
 
-const SwaggerRouter = module.exports.SwaggerRouter = class SwaggerRouter {
-  constructor() {}
-}
-
-SwaggerRouter.prototype.process = function (event) {
+Swambda.prototype.process = function (event) {
   return new Promise((resolve, reject) => {
     const path = event.path.substring(this.spec.basePath.length);
     const httpMethod = event.httpMethod.toLowerCase();
-
     if(httpMethod === "options") {
       respondWith(resolve, 200, "");
       return;
@@ -154,17 +196,21 @@ SwaggerRouter.prototype.process = function (event) {
       });
       return;
     }
-    cls[operationId](args)
-      .then(response => {
-        resolve(response);
-      })
-      .catch(err => {
-        respondWith(resolve, 500, {
-          statusCode: 500,
-          body: {
-            code: 500,
-            message: "bad operation"
-          }});
+
+    this.preProcessor(event, args)
+      .then((result) => {
+        cls[operationId](args)
+          .then(response => {
+            resolve(response);
+          })
+          .catch(err => {
+            respondWith(resolve, 500, {
+              statusCode: 500,
+              body: {
+                code: 500,
+                message: "bad operation"
+              }});
+          });
       });
   })
 }
