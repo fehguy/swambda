@@ -7,6 +7,18 @@ const utils = require("./utils");
 global.Swambda = class Swambda {
   constructor(prefix) {
     this.prefix = prefix;
+    this.requestInterceptor = function (event, args) {
+      return new Promise((resolve, reject) => {
+        resolve(args);
+      });
+    }
+
+    this.responseInterceptor = function (response) {
+      return new Promise((resolve, reject) => {
+        resolve (response);
+      })
+    }
+    return this;
   }
 }
 
@@ -21,12 +33,12 @@ Swambda.prototype.pathPrefix = function (prefix) {
 };
 
 Swambda.prototype.preProcessor = function (preProcessor) {
-  this.preProcessor = preProcessor;
+  this.requestInterceptor = preProcessor;
   return this;
 }
 
 Swambda.prototype.postProcessor = function (postProcessor) {
-  global.postProcessor = postProcessor;
+  global.responseInterceptor = postProcessor;
   return this;
 }
 
@@ -197,7 +209,7 @@ Swambda.prototype.process = function (event) {
       return;
     }
 
-    this.preProcessor(event, args)
+    this.requestInterceptor(event, args)
       .then((result) => {
         cls[operationId](args)
           .then(response => {

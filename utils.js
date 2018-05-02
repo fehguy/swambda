@@ -23,8 +23,8 @@ global.respondWith = function (resolve, code, body) {
   else {
     response.body = "";
   }
-  if(global.postProcessor && typeof global.postProcessor === "function") {
-    global.postProcessor(response)
+  if(global.responseInterceptor && typeof global.responseInterceptor === "function") {
+    global.responseInterceptor(response)
       .then((res) => {
         resolve(res);
       }
