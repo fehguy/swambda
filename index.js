@@ -92,7 +92,7 @@ Swambda.prototype.load = function () {
         router.setTree(router.specToTree(api));
         self.router = router;
 
-        // global.router = router;
+        global.router = self;
         resolve(self);
       });
   });
