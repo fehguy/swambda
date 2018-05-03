@@ -5,8 +5,8 @@ Building upon the swagger petstore, we have some files:
 
 * [src/main.js](src/main.js).  This has the initialization and routing logic.
 * [src/controllers/Pets.js](src/controllers/Pets.js).  Business logic lives here.
-* [netlify.toml].  A netlify configuration file that specifies the functions output
-* [webpack.config.js].  A simple webpack configuration file.
+* [netlify.toml](netlify.toml).  A netlify configuration file that specifies the functions output
+* [webpack.conf.js](webpack.conf.js).  A simple webpack configuration file.
 
 
 To run, copy this folder to a new location.  In the root of that folder, install
@@ -44,7 +44,11 @@ Run the code and let `netlify-lambda` watch for changes:
 netlify-lambda serve src -c webpack.conf.js
 ```
 
-Finally, open your browser to [http://localhost:9000/api/.netlify/functions/api/pets](http://localhost:9000/api/.netlify/functions/api/pets)
+Finally, after running the `serve` command, open your browser to [http://localhost:9000/api/.netlify/functions/api/pets](http://localhost:9000/api/.netlify/functions/api/pets) to see the calling of the `findAll(args)` function.  If a `limit` query param is supplied, it'll be passed in the `args`
+hash.
+
+The library exposes a special route, `/swagger.json` for usage with [swagger-ui](https://github.com/swagger-api/swagger-ui).  You can hit it [locally](http://localhost:9000/main/.netlify/functions/main/swagger.json) (note the derived `basePath`!) or just load it up in swagger-ui using the
+online petstore:
 
 http://petstore.swagger.io/?url=http://localhost:9000/main/.netlify/functions/main/swagger.json
 
