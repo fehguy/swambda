@@ -4,9 +4,6 @@ info:
   title: Swagger Petstore
   license:
     name: MIT
-schemes:
-  - https
-  - http
 consumes:
   - application/json
 produces:

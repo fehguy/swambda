@@ -47,7 +47,7 @@ netlify-lambda serve src -c webpack.conf.js
 Finally, after running the `serve` command, open your browser to [http://localhost:9000/api/.netlify/functions/api/pets](http://localhost:9000/main/.netlify/functions/main/pets) to see the calling of the `findAll(args)` function.  If a `limit` query param is supplied, it'll be passed in the `args`
 hash.
 
-The library exposes a special route, `/swagger.json` for usage with [swagger-ui](https://github.com/swagger-api/swagger-ui).  You can hit it [locally](http://localhost:9000/main/.netlify/functions/main/swagger.json) (note the derived `basePath`!) or just load it up in swagger-ui using the
+The library exposes a special route, `/swagger.json` for usage with [swagger-ui](https://github.com/swagger-api/swagger-ui/blob/master/README.md).  You can hit it [locally](http://localhost:9000/main/.netlify/functions/main/swagger.json) (note the derived `basePath`!) or just load it up in swagger-ui using the
 online petstore:
 
 http://petstore.swagger.io/?url=http://localhost:9000/main/.netlify/functions/main/swagger.json
