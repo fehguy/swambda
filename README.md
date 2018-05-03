@@ -101,18 +101,23 @@ where the library responses are being served from.  This eases the setup.
 We now are guaranteed to have a `router` object, which can process the request:
 
 ```js
-return router.process(event)
+router.process(event)
   .then((result) => {
     // return result to the caller
     callback(null, result);
   })
   .catch((err) => {
-    // catch any errors and do something
+    // catch any errors and do something meaningful
     callback(null, err);
   });
 ```
 
-Configure optional features, so you can add authentication, response signing,
+Note: the `.catch()` is not expected to be invoked at runtime. Any `reject(..)`
+messages should be caught inside your controller code, and passed to the
+`respondWith` function.  That allows you to send a proper error message and
+payload, not just some ugly stack trace.
+
+You can configure optional features, so you can add authentication, response signing,
 etc:
 
 ```js
