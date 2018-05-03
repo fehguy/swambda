@@ -1,13 +1,24 @@
 "use strict";
 
-global.respondWith = function (resolve, code, body) {
+let container = {};
+
+module.exports.cacheWith = (cache) => {
+  const existing = container;
+  container = cache;
+
+  if(existing.responseInterceptor) {
+    container.responseInterceptor;
+  }
+}
+
+module.exports.respondWith = function (resolve, code, body) {
   const response = {
     statusCode: code,
     headers: {}
   };
-  if(global.extraHeaders) {
+  if(container.extraHeaders) {
     Object.keys(extraHeaders).forEach((key) => {
-      response.headers[key] = global.extraHeaders[key];
+      response.headers[key] = container.extraHeaders[key];
     });
   }
 
@@ -23,8 +34,8 @@ global.respondWith = function (resolve, code, body) {
   else {
     response.body = "";
   }
-  if(global.responseInterceptor && typeof global.responseInterceptor === "function") {
-    global.responseInterceptor(response)
+  if(container.responseInterceptor && typeof container.responseInterceptor === "function") {
+    container.responseInterceptor(response)
       .then((res) => {
         resolve(res);
       }

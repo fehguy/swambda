@@ -3,17 +3,52 @@
 const SwaggerParser = require("swagger-parser");
 const Router = require("swagger-router").Router;
 const utils = require("./utils");
+let container = {};
 
-global.Swambda = class Swambda {
+module.exports.cacheWith = (cache) => {
+  const existing = container;
+  utils.cacheWith(cache);
+  container = cache;
+
+  if(existing.requestInterceptor) {
+    container.requestInterceptor;
+  }
+  if(existing.responseInterceptor) {
+    container.responseInterceptor;
+  }
+  container.Swambda = Swambda;
+  container.respondWith = utils.respondWith;
+};
+
+module.exports.fromCache = () => {
+  return new Promise((resolve, reject) => {
+    if(container.router) {
+      resolve(container.router);
+    }
+    else {
+      reject();
+    }
+  });
+};
+
+module.exports.cache = (router) => {
+  if(container) {
+    container.router = router;
+  }
+};
+
+const Swambda = class Swambda {
   constructor(prefix) {
     this.prefix = prefix;
-    this.requestInterceptor = function (event, args) {
+    container.respondWith = utils.respondWith;
+
+    container.requestInterceptor = function (event, args) {
       return new Promise((resolve, reject) => {
         resolve(args);
       });
     }
 
-    this.responseInterceptor = function (response) {
+    container.responseInterceptor = function (response) {
       return new Promise((resolve, reject) => {
         resolve (response);
       })
@@ -33,12 +68,12 @@ Swambda.prototype.pathPrefix = function (prefix) {
 };
 
 Swambda.prototype.preProcessor = function (preProcessor) {
-  this.requestInterceptor = preProcessor;
+  container.requestInterceptor = preProcessor;
   return this;
 }
 
 Swambda.prototype.postProcessor = function (postProcessor) {
-  global.responseInterceptor = postProcessor;
+  container.responseInterceptor = postProcessor;
   return this;
 }
 
@@ -54,25 +89,25 @@ Swambda.prototype.cors = function (extra) {
     headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, PUT";
   }
   if(!headers["Access-Control-Allow-Headers"]) {
-    headers["Access-Control-Allow-Headers"] = "Content-Type, api_key, Authorization";
+    headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
   }
-  global.extraHeaders = extra || {};
+  container.extraHeaders = extra || {};
   return this;
 }
 
-Swambda.prototype.load = function () {
+Swambda.prototype.load = function (identifier) {
   return new Promise((resolve, reject) => {
-    if(global.router) {
-      resolve(global.router);
+    if(container.router) {
+      resolve(container.router);
       return;
     }
     let path;
-    if(typeof this.specLocator === "object") {
-      this.spec = path;
+    if(typeof identifier === "object") {
+      this.spec = identifier;
       path = undefined;
     }
     else {
-      this.spec = require("yml-loader!../../swagger.yaml");
+      this.spec = require(identifier);
     }
 
     const self = this;
@@ -92,7 +127,7 @@ Swambda.prototype.load = function () {
         router.setTree(router.specToTree(api));
         self.router = router;
 
-        global.router = self;
+        container.router = self;
         resolve(self);
       });
   });
@@ -103,12 +138,11 @@ Swambda.prototype.process = function (event) {
     const path = event.path.substring(this.spec.basePath.length);
     const httpMethod = event.httpMethod.toLowerCase();
     if(httpMethod === "options") {
-      respondWith(resolve, 200, "");
+      container.respondWith(resolve, 200, "");
       return;
     }
-
     if(!path) {
-      respondWith(resolve, 404, {
+      container.respondWith(resolve, 404, {
         statusCode: 404,
         body: {
           code: 404,
@@ -117,12 +151,12 @@ Swambda.prototype.process = function (event) {
         return;
     }
     if(path === "/swagger.json") {
-      respondWith(resolve, 200, this.spec);
+      container.respondWith(resolve, 200, this.spec);
       return;
     }
     const route = this.router.lookup(path);
     if(!route) {
-      respondWith(resolve, 404, {
+      container.respondWith(resolve, 404, {
         code: 404,
         message: "path " + path + " not found"
       });
@@ -130,7 +164,7 @@ Swambda.prototype.process = function (event) {
     }
     const operation = route.value[httpMethod];
     if(!operation) {
-      respondWith(resolve, 404, {
+      container.respondWith(resolve, 404, {
         code: 404,
         message: "operation `" + httpMethod + "` not found"
       });
@@ -141,7 +175,7 @@ Swambda.prototype.process = function (event) {
     const args = {};
     const controller = operation["x-swagger-router-controller"];
     if(!controller) {
-      respondWith(resolve, 404, {
+      container.respondWith(resolve, 404, {
         code: 404,
         message: "controller `" + controller + "` not found"
       });
@@ -149,7 +183,7 @@ Swambda.prototype.process = function (event) {
     }
     const operationId = operation.operationId;
     if(!operationId) {
-      respondWith(resolve, 404, {
+      container.respondWith(resolve, 404, {
         statusCode: 404,
         body: {
           code: 404,
@@ -186,37 +220,34 @@ Swambda.prototype.process = function (event) {
         params[param.name] = param;
     });
 
-    const str = Object.keys(args).map(arg => {
-      return arg + ": " + args[arg];
-    });
     let cls;
     try {
       const classname = "" + controller;
       cls = require(`../../controllers/${controller}`);
     }
     catch(e) {
-      respondWith(resolve, 400, {
+      container.respondWith(resolve, 400, {
         code: 400,
         message: "class " + controller + " not found"
       });
       return;
     }
     if(!cls || typeof cls[operationId] !== "function") {
-      respondWith(resolve, 404, {
+      container.respondWith(resolve, 404, {
         code: 404,
         message: "operation not found"
       });
       return;
     }
 
-    this.requestInterceptor(event, args)
+    container.requestInterceptor(event, args)
       .then((result) => {
         cls[operationId](args)
           .then(response => {
             resolve(response);
           })
           .catch(err => {
-            respondWith(resolve, 500, {
+            container.respondWith(resolve, 500, {
               statusCode: 500,
               body: {
                 code: 500,

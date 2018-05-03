@@ -27,6 +27,39 @@ It is expected that each controller function will return a promise, and can
 optionally use a simple function to correctly format a response as appropriate
 for the netlify platform.
 
+for example:
+
+```
+GET: /pets/{petId}
+```
+
+in an OAI definition:
+
+```yaml
+/pets/{petId}:
+  get:
+    summary: Info for a specific pet
+    operationId: getPetById
+    x-swagger-router-controller: Pets
+    tags:
+      - pets
+    parameters:
+      - name: petId
+        in: path
+        required: true
+        description: The id of the pet to retrieve
+        type: string
+```
+
+will call the `Pets.js` javascript file method `getPetById`:
+
+```js
+const getPetById = exports.getPetById = (args) => {
+  const petId = args.petId;
+ /* return a promise and resolve with the pet data */
+}
+```
+
 #### Basic setup
 
 Import the project and expose a single handler function:
@@ -36,27 +69,48 @@ Import the project and expose a single handler function:
 "use strict";
 
 let swambda = require("swambda");
-
 const handler = exports.handler = (event, context, callback) => {
 ```
 
-initialize the Swambda library
+Set a cache.  For a lambda, using `global` is a common practice.  If outside
+of a lambda-like runtime, use something else that supports a map.  This also
+exposes the `Swambda` class globally in our example, so `new Swambda()` resolves.
+
 ```js
-  new Swambda(event.path)
-    .then(router => {
-      return router.process(event);
-    })
-    .then(data => {
-      callback(null, data)
-    })
-    .catch(err => {
-      callback(null, err)
-    });
-};
+swambda.cacheWith(global);
+
+const router = swambda.fromCache()
+  .catch((err) => {
+    // not in cache, need to create
+
+    // load spec as object via webpack yml-loader
+    const swagger = require("yml-loader!./swagger.yaml");
+
+    // set the route path
+    return new Swambda(event.path)
+      .load(swagger)
+      .then(router => {
+        return router;
+      });
+});
 ```
 
 Note! the `event.path` variable is used during initialization to help determine
 where the library responses are being served from.  This eases the setup.
+
+We now are guaranteed to have a `router` object, which can process the request:
+
+```js
+return router.process(event)
+  .then((result) => {
+    // return result to the caller
+    callback(null, result);
+  })
+  .catch((err) => {
+    // catch any errors and do something
+    callback(null, err);
+  });
+```
 
 Configure optional features, so you can add authentication, response signing,
 etc:
@@ -131,10 +185,12 @@ const getPetById = exports.getPetById = (args) => {
 }
 ```
 
+Here is a [full example](https://github.com/fehguy/swambda/blob/master/examples/simple.md)
+
 #### FAQs
 
-**What about performance?**  The swambda object is stored in a global cache after
-setup, so there is no additional overhead to getting going.
+**What about performance?**  Use the cache during setup and it has almost zero
+overhead.
 
 **What parameter types are supported?**  Primitives and objects are currently
 supported. Parameters with arrays, form data, dates are not (but easy to add).

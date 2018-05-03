@@ -9,7 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "netlify-lambda": "^0.4.0",
     "swagger-parser": "^4.1.0",
     "swagger-router": "^0.7.1"
+  },
+  "devDependencies": {
+    "yml-loader": "^2.1.0"
   }
 }
