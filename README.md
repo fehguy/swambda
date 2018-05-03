@@ -118,8 +118,8 @@ etc:
 ```js
 
 new Swambda(event.path)
-  .cors() // enable CORS and add additional response headers
-  .preProcessor(preProcessor) // add a pre-processor for requests
+  .cors()                       // enable CORS and add additional response headers
+  .preProcessor(preProcessor)   // add a pre-processor for requests
   .postProcessor(postProcessor) // add a post-processor for responses
   //-> continue with loading
 ```
@@ -134,7 +134,13 @@ new Swambda(event.path)
   })
 ```
 
-The `preProcessor` should look like this:
+This will merge with the "standard" CORS response headers like
+
+* `Access-Control-Allow-Headers`
+* `Access-Control-Allow-Methods`
+* `Access-Control-Allow-Origin`
+
+The `preProcessor` signature looks like this:
 
 ```js
 const preProcessor = function (event, args) {
@@ -145,6 +151,9 @@ const preProcessor = function (event, args) {
   });
 }
 ```
+
+Note that the preProcessor can add additional arguments into the `args` hash,
+just be sure to avoid collisions with arguments defined in the OAI Spec.
 
 The `postProcessor` can inject additional headers, handle special error codes, etc:
 

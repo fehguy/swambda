@@ -85,9 +85,6 @@ Swambda.prototype.cors = function (extra) {
   if(!headers["Access-Control-Allow-Origin"]) {
     headers["Access-Control-Allow-Origin"] = "*";
   }
-  if(!headers["Allow"]) {
-    headers["Allow"] = "OPTIONS,HEAD,DELETE,POST,GET";
-  }
   if(!headers["Access-Control-Allow-Methods"]) {
     headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, PUT";
   }
