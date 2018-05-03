@@ -128,12 +128,13 @@ When configuring CORS support, you can optionally add headers in the function.
 For example, if you want to allow a header called `Bearer`:
 
 ```js
+new Swambda(event.path)
   .cors({
     "Access-Control-Allow-Headers": "Content-Type, Bearer"
   })
 ```
 
-The `preProcessor` can look like this:
+The `preProcessor` should look like this:
 
 ```js
 const preProcessor = function (event, args) {

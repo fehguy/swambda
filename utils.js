@@ -3,11 +3,15 @@
 let container = {};
 
 module.exports.cacheWith = (cache) => {
+  console.log("setting cacheWith")
   const existing = container;
   container = cache;
 
   if(existing.responseInterceptor) {
     container.responseInterceptor;
+  }
+  if(existing.extraHeaders) {
+    container.extraHeaders;
   }
 }
 
@@ -16,8 +20,9 @@ module.exports.respondWith = function (resolve, code, body) {
     statusCode: code,
     headers: {}
   };
+  console.log(container.extraHeaders);
   if(container.extraHeaders) {
-    Object.keys(extraHeaders).forEach((key) => {
+    Object.keys(container.extraHeaders).forEach((key) => {
       response.headers[key] = container.extraHeaders[key];
     });
   }

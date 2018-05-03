@@ -16,6 +16,9 @@ module.exports.cacheWith = (cache) => {
   if(existing.responseInterceptor) {
     container.responseInterceptor;
   }
+  if(existing.extraHeaders) {
+    container.extraHeaders;
+  }
   container.Swambda = Swambda;
   container.respondWith = utils.respondWith;
 };
@@ -91,7 +94,7 @@ Swambda.prototype.cors = function (extra) {
   if(!headers["Access-Control-Allow-Headers"]) {
     headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization";
   }
-  container.extraHeaders = extra || {};
+  container.extraHeaders = headers;
   return this;
 }
 
