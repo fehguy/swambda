@@ -2,7 +2,8 @@
 
 const SwaggerParser = require("swagger-parser");
 const Router = require("swagger-router").Router;
-const utils = require("./utils");
+const params = require("./src/params");
+const utils = require("./src/utils");
 let container = {};
 
 module.exports.cacheWith = (cache) => {
@@ -11,13 +12,13 @@ module.exports.cacheWith = (cache) => {
   container = cache;
 
   if(existing.requestInterceptor) {
-    container.requestInterceptor;
+    container.requestInterceptor = existing.requestInterceptor;
   }
   if(existing.responseInterceptor) {
-    container.responseInterceptor;
+    container.responseInterceptor = existing.responseInterceptor;
   }
   if(existing.extraHeaders) {
-    container.extraHeaders;
+    container.extraHeaders = existing.extraHeaders;
   }
   container.Swambda = Swambda;
   container.respondWith = utils.respondWith;
@@ -49,16 +50,16 @@ const Swambda = class Swambda {
       return new Promise((resolve, reject) => {
         resolve(args);
       });
-    }
+    };
 
     container.responseInterceptor = function (response) {
       return new Promise((resolve, reject) => {
         resolve (response);
-      })
-    }
+      });
+    };
     return this;
   }
-}
+};
 
 Swambda.prototype.spec = function (specLocator) {
   this.specLocator = specLocator;
@@ -73,12 +74,12 @@ Swambda.prototype.pathPrefix = function (prefix) {
 Swambda.prototype.preProcessor = function (preProcessor) {
   container.requestInterceptor = preProcessor;
   return this;
-}
+};
 
 Swambda.prototype.postProcessor = function (postProcessor) {
   container.responseInterceptor = postProcessor;
   return this;
-}
+};
 
 Swambda.prototype.cors = function (extra) {
   const headers = extra || {};
@@ -93,7 +94,7 @@ Swambda.prototype.cors = function (extra) {
   }
   container.extraHeaders = headers;
   return this;
-}
+};
 
 Swambda.prototype.load = function (identifier) {
   return new Promise((resolve, reject) => {
@@ -131,7 +132,7 @@ Swambda.prototype.load = function (identifier) {
         resolve(self);
       });
   });
-}
+};
 
 Swambda.prototype.process = function (event) {
   return new Promise((resolve, reject) => {
@@ -194,7 +195,7 @@ Swambda.prototype.process = function (event) {
     (operation.parameters || [])
       .map((param) => {
         if(param.in === "path") {
-          const value = extractValue(param, route.params);
+          const value = params.extract(param, route.params);
           if(typeof value !== "undefined") {
             args[param.name] = value;
           }
@@ -206,13 +207,13 @@ Swambda.prototype.process = function (event) {
           }
         }
         if(param.in === "query") {
-          const value = extractValue(param, event.queryStringParameters);
+          const value = params.extract(param, event.queryStringParameters);
           if(typeof value !== "undefined") {
             args[param.name] = value;
           }
         }
         if(param.in === "header") {
-          const value = extractValue(param, event.headers);
+          const value = params.extract(param, event.headers);
           if(typeof value !== "undefined") {
             args[param.name] = value;
           }
@@ -255,12 +256,12 @@ Swambda.prototype.process = function (event) {
               }});
           });
       });
-  })
-}
+  });
+};
 
 module.exports.prettyPrint = (error, value) => {
   console.log(JSON.stringify(value, null, 2));
-}
+};
 
 const parseBody = (headers, body) => {
   if(typeof body === "undefined") {
@@ -274,20 +275,4 @@ const parseBody = (headers, body) => {
       return body;
     }
   }
-}
-
-const extractValue = (param, source) => {
-  const value = source[param.name];
-  if(!value) {
-    return;
-  }
-  switch(param.type) {
-    case "integer":
-      const result = parseInt(value);
-      return isNaN(result) ? undefined : result;
-    case "boolean":
-      return value === "true";
-    default:
-      return value;
-  }
-}
+};

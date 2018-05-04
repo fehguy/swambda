@@ -7,12 +7,12 @@ module.exports.cacheWith = (cache) => {
   container = cache;
 
   if(existing.responseInterceptor) {
-    container.responseInterceptor;
+    container.responseInterceptor = existing.responseInterceptor;
   }
   if(existing.extraHeaders) {
-    container.extraHeaders;
+    container.extraHeaders = existing.extraHeaders;
   }
-}
+};
 
 module.exports.respondWith = function (resolve, code, body) {
   const response = {
@@ -42,7 +42,7 @@ module.exports.respondWith = function (resolve, code, body) {
       .then((res) => {
         resolve(res);
       }
-    )
+    );
   }
   else {
     resolve(response);

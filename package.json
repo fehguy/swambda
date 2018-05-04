@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "jshint *.js src/*.js",
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +15,8 @@
     "swagger-router": "^0.7.1"
   },
   "devDependencies": {
+    "expect": "^22.4.3",
+    "mocha": "^5.1.1",
     "yml-loader": "^2.1.0"
   }
 }

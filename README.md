@@ -176,8 +176,7 @@ const postProcessor = function (response) {
 Finally, implementing the business logic is easy!
 
 ```js
-// load the utils to get the global `respondWith` function
-const utils = require("swambda/utils");
+// Node: `respondWith` is implicitly available with a global cache
 
 const getPetById = exports.getPetById = (args) => {
   return new Promise((resolve, reject) => {
@@ -202,10 +201,10 @@ const getPetById = exports.getPetById = (args) => {
 
 Here is a [full example](https://github.com/fehguy/swambda/blob/master/examples/simple.md)
 
-#### FAQs
+### FAQs
 
-**What about performance?**  Use the cache during setup and it has almost zero
+What about performance?  Use the cache during setup and it has almost zero
 overhead.
 
-**What parameter types are supported?**  Primitives and objects are currently
-supported. Parameters with arrays, form data, dates are not (but easy to add).
+What parameter types are supported?  Primitives and objects are currently
+supported. Parameters with arrays, form data are not (but easy to add).
