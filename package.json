@@ -1,14 +1,14 @@
 {
   "name": "swambda",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "A library for materializing an OpenAPI specification in an AWS Lambda-type environment.",
   "main": "index.js",
   "scripts": {
     "lint": "jshint *.js src/*.js",
     "test": "mocha"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "netlify-lambda": "^0.4.0",
     "swagger-parser": "^4.1.0",
