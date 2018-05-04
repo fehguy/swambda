@@ -41,7 +41,7 @@ module.exports.cache = (router) => {
   }
 };
 
-const Swambda = class Swambda {
+const Swambda = module.exports.Swambda = class Swambda {
   constructor(prefix) {
     this.prefix = prefix;
     container.respondWith = utils.respondWith;
@@ -130,7 +130,10 @@ Swambda.prototype.load = function (identifier) {
 
         container.router = self;
         resolve(self);
-      });
+      })
+      .catch((err) => {
+        reject(err);
+      })
   });
 };
 
