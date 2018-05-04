@@ -3,6 +3,22 @@
   "version": "0.0.1",
   "description": "A library for materializing an OpenAPI specification in an AWS Lambda-type environment.",
   "main": "index.js",
+  "keywords": [
+    "swagger",
+    "json",
+    "yaml",
+    "parse",
+    "parser",
+    "validate",
+    "validator",
+    "validation",
+    "spec",
+    "specification",
+    "schema",
+    "aws",
+    "lambda",
+    "netlify"
+  ],
   "scripts": {
     "lint": "jshint *.js src/*.js",
     "test": "mocha"
