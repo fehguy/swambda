@@ -12,6 +12,6 @@
     "yml-loader": "^2.1.0"
   },
   "dependencies": {
-    "swambda": "https://github.com/fehguy/swambda"
+    "swambda": "^0.0.3"
   }
 }
