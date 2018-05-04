@@ -172,7 +172,7 @@ Swambda.prototype.process = function (event) {
       return;
     }
 
-    const params = {};
+    const operationParams = {};
     const args = {};
     const controller = operation["x-swagger-router-controller"];
     if(!controller) {
@@ -218,7 +218,7 @@ Swambda.prototype.process = function (event) {
             args[param.name] = value;
           }
         }
-        params[param.name] = param;
+        operationParams[param.name] = param;
     });
 
     let cls;
