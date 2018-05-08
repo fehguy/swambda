@@ -4,13 +4,19 @@ const SwaggerParser = require("swagger-parser");
 const Router = require("swagger-router").Router;
 const params = require("./src/params");
 const utils = require("./src/utils");
-let container = {};
+
+let container = {
+  controllers: "./controllers"
+};
 
 module.exports.cacheWith = (cache) => {
   const existing = container;
   utils.cacheWith(cache);
   container = cache;
 
+  if(existing.controllers) {
+    container.controllers = existing.controllers;
+  }
   if(existing.requestInterceptor) {
     container.requestInterceptor = existing.requestInterceptor;
   }
@@ -81,6 +87,11 @@ Swambda.prototype.postProcessor = function (postProcessor) {
   return this;
 };
 
+Swambda.prototype.controllerDir = function (controllerDir) {
+  container.controllers = controllerDir;
+  return this;
+};
+
 Swambda.prototype.cors = function (extra) {
   const headers = extra || {};
   if(!headers["Access-Control-Allow-Origin"]) {
@@ -102,27 +113,11 @@ Swambda.prototype.load = function (identifier) {
       resolve(container.router);
       return;
     }
-    let path;
-    if(typeof identifier === "object") {
-      this.spec = identifier;
-      path = undefined;
-    }
-    else {
-      this.spec = require(identifier);
-    }
-
     const self = this;
-    SwaggerParser.validate(this.spec)
+    SwaggerParser.validate(identifier)
       .then(api => {
-        let moduleName = this.prefix.substring(this.prefix.indexOf("/.netlify/functions/"))
-          .substring("/.netlify/functions/".length).split("/")[0];
-
-        if(self.prefix.startsWith("/" + moduleName)) {
-          api.basePath = "/" + moduleName + "/.netlify/functions/" + moduleName;
-        }
-        else {
-          api.basePath = "/.netlify/functions/" + moduleName;
-        }
+        self.spec = api;
+        api.basePath = this.prefix;
 
         const router = new Router();
         router.setTree(router.specToTree(api));
@@ -139,7 +134,13 @@ Swambda.prototype.load = function (identifier) {
 
 Swambda.prototype.process = function (event) {
   return new Promise((resolve, reject) => {
-    const path = event.path.substring(this.spec.basePath.length);
+    if(!event || !event.path) {
+      container.respondWith(resolve, 500, "invalid request sent");
+      return;
+    }
+    let path = event.path;
+    path = path.substring(path.indexOf(this.spec.basePath) + this.spec.basePath.length);
+
     const httpMethod = event.httpMethod.toLowerCase();
     if(httpMethod === "options") {
       container.respondWith(resolve, 200, "");
@@ -225,16 +226,21 @@ Swambda.prototype.process = function (event) {
     });
 
     let cls;
+    const controllers = container.controllers;
     try {
-      const classname = "" + controller;
-      cls = require(`../../controllers/${controller}`);
+      cls = require(`../../${controllers}/${controller}`);
     }
     catch(e) {
-      container.respondWith(resolve, 400, {
-        code: 400,
-        message: "class " + controller + " not found"
-      });
-      return;
+      try {
+        cls = require(`./${controllers}/${controller}`);
+      }
+      catch (e) {
+        container.respondWith(resolve, 400, {
+          code: 400,
+          message: "class " + controller + " not found"
+        });
+        return;
+      }
     }
     if(!cls || typeof cls[operationId] !== "function") {
       container.respondWith(resolve, 404, {
