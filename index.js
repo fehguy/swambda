@@ -148,12 +148,10 @@ Swambda.prototype.process = function (event) {
     }
     if(!path) {
       container.respondWith(resolve, 404, {
-        statusCode: 404,
-        body: {
-          code: 404,
-          message: "invalid path"
-        }});
-        return;
+        code: 404,
+        message: "invalid path"
+      });
+      return;
     }
     if(path === "/swagger.json") {
       container.respondWith(resolve, 200, this.spec);
@@ -189,12 +187,10 @@ Swambda.prototype.process = function (event) {
     const operationId = operation.operationId;
     if(!operationId) {
       container.respondWith(resolve, 404, {
-        statusCode: 404,
-        body: {
-          code: 404,
-          message: "operationId `" + operationId + "` not found"
-        }});
-        return;
+        code: 404,
+        message: "operationId `" + operationId + "` not found"
+      });
+      return;
     }
     (operation.parameters || [])
       .map((param) => {
@@ -258,11 +254,9 @@ Swambda.prototype.process = function (event) {
           })
           .catch(err => {
             container.respondWith(resolve, 500, {
-              statusCode: 500,
-              body: {
-                code: 500,
-                message: "bad operation"
-              }});
+              code: 500,
+              message: "bad operation"
+            });
           });
       });
   });
