@@ -13,7 +13,7 @@ const handler = exports.handler = (event, context, callback) => {
       const swagger = require("yml-loader!./swagger.yaml");
 
       // set the route path
-      return new Swambda(event.path)
+      return new Swambda("/main/.netlify/functions/main")
         .cors()
         .preProcessor(preProcessor)
         .postProcessor(postProcessor)

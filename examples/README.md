@@ -13,7 +13,7 @@ To run, copy this folder to a new location.  In the root of that folder, install
 `netlify-lambda`:
 
 ```
-npm i --save-dev netlify-lambda
+npm i --save-dev netlify-lambda yml-loader
 ```
 
 Then install packages in the `src` folder:
