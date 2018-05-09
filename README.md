@@ -51,6 +51,11 @@ in an OAI definition:
         required: true
         description: The id of the pet to retrieve
         type: string
+    responses:
+      200:
+        description: The pet requested
+        schema:
+          $ref: "#/definitions/Pet"
 ```
 
 will call the `Pets.js` javascript file method `getPetById`:

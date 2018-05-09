@@ -21,6 +21,25 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Pet"
+  /pets/{id}:
+    get:
+      x-swagger-router-controller: "Pets"
+      operationId: getPetById
+      parameters:
+        - in: path
+          name: id
+          type: string
+          format: uuid
+          required: true
+      responses:
+        200:
+          description: the expected pet
+          schema:
+            $ref: "#/definitions/Pet"
+        404:
+          description: pet not found
+          schema:
+            $ref: "#/definitions/Error"
 definitions:
   Pet:
     type: object
@@ -29,4 +48,13 @@ definitions:
       id:
         type: string
       name:
+        type: string
+  Error:
+    type: object
+    required: [code, message]
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
         type: string

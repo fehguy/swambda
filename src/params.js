@@ -1,5 +1,6 @@
 
-module.exports.extract = (param, source) => {
+module.exports.extract = (param, source, errors) => {
+  errors = errors || [];
   const value = source[param.name];
   if(typeof value === "undefined") {
     return;
@@ -11,7 +12,7 @@ module.exports.extract = (param, source) => {
         case "csv":
           parts = value.split(",");
           parts.forEach((part) => {
-            const val = extractOne(param, part.trim());
+            const val = extractOne(param, part.trim(), errors);
             if(typeof val !== "undefined") {
               output.push(val);
             }
@@ -20,7 +21,7 @@ module.exports.extract = (param, source) => {
         case "tsv":
           parts = value.split("\t");
           parts.forEach((part) => {
-            const val = extractOne(param, part.trim());
+            const val = extractOne(param, part.trim(), errors);
             if(typeof val !== "undefined") {
               output.push(val);
             }
@@ -29,7 +30,7 @@ module.exports.extract = (param, source) => {
         case "ssv":
           parts = value.split(" ");
           parts.forEach((part) => {
-            const val = extractOne(param, part.trim());
+            const val = extractOne(param, part.trim(), errors);
             if(typeof val !== "undefined") {
               output.push(val);
             }
@@ -38,7 +39,7 @@ module.exports.extract = (param, source) => {
         default:
           if(Array.isArray(value)) {
             value.forEach((v) => {
-              const val = extractOne(param, part.trim());
+              const val = extractOne(param, part.trim(), errors);
               if(typeof val !== "undefined") {
                 output.push(val);
               }
@@ -48,19 +49,23 @@ module.exports.extract = (param, source) => {
       }
     }
     else {
-      return extractOne(param, value);
+      return extractOne(param, value, errors);
     }
   }
   catch (e) {
-
+    errors.push("failed to extract " + param.in + " parameter");
   }
 };
 
-const extractOne = (param, value) => {
+const extractOne = (param, value, errors) => {
   switch(param.type) {
     case "integer":
       const result = parseInt(value);
-      return isNaN(result) ? undefined : result;
+      if(isNaN(result)) {
+        errors.push("unable to convert " + param.in + " parameter '" + param.name + "' to integer");
+        return;
+      }
+      return result;
       break;
     case "boolean":
       if(value === "true" || value === true) {
@@ -69,11 +74,13 @@ const extractOne = (param, value) => {
       if(value === "false" || value === false) {
         return false;
       }
+      errors.push("unable to convert " + param.in + " parameter '" + param.name + "' to boolean");
       return;
     case "string":
       if(param.format === "date-time") {
         const date = new Date(value);
         if(isNaN(date.getDate())) {
+          errors.push("unable to convert " + param.in + " parameter '" + param.name + "' to date");
           return;
         }
         else {
