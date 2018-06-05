@@ -1,8 +1,9 @@
 "use strict";
 
-const SwaggerParser = require("swagger-parser");
+const Swagger = require("swagger-client");
 const Router = require("swagger-router").Router;
 const params = require("./src/params");
+const jsYaml = require("js-yaml");
 const utils = require("./src/utils");
 
 let container = {
@@ -114,13 +115,14 @@ Swambda.prototype.load = function (identifier) {
       return;
     }
     const self = this;
-    SwaggerParser.validate(identifier)
-      .then(api => {
-        self.spec = api;
-        api.basePath = this.prefix;
+
+    resolveSpec(identifier)
+      .then(res => {
+        self.spec = res.spec;
+        self.spec.basePath = this.prefix;
 
         const router = new Router();
-        router.setTree(router.specToTree(api));
+        router.setTree(router.specToTree(self.spec));
         self.router = router;
 
         container.router = self;
@@ -131,6 +133,54 @@ Swambda.prototype.load = function (identifier) {
       })
   });
 };
+
+var resolveSpec = function (identifier) {
+  // passed a spec object
+  return new Promise((resolve, reject) => {
+    if(typeof identifier === "object") {
+      Swagger.resolve({
+        spec: identifier,
+        allowMetaPatches: false
+      }).then((res) => {
+        resolve(res);
+      }).catch((err) => {
+        reject(err)
+      });
+      return;
+    }
+    // passed a URL
+    if(identifier.indexOf("http://") === 0 || identifier.indexOf("https://") === 0) {
+      Swagger.resolve({
+        allowMetaPatches: false,
+        url: identifier
+      }).then((res) => {
+        resolve(res);
+      }).catch((err) => {
+        reject(err)
+      });
+      return;
+    }
+    // passed a file location
+    require("fs").readFile(identifier, "utf-8", (err, contents) => {
+      if(err) {
+        reject(err);
+      }
+      else {
+        let spec;
+        try {
+          const spec = jsYaml.safeLoad(contents, 'utf8');
+          Swagger.resolve({
+            spec: spec,
+            allowMetaPatches: false
+          }).then((res) => resolve(res));
+        }
+        catch(e) {
+          reject(e);
+        }
+      }
+    });
+  });
+}
 
 Swambda.prototype.process = function (event) {
   return new Promise((resolve, reject) => {
