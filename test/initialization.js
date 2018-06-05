@@ -15,7 +15,7 @@ describe("initalization", () => {
         done("should have failed!");
       })
       .catch((err) => {
-        expect(err.name).toBe("SyntaxError");
+        expect(err.name).toBe("TypeError");
         done();
       });
   });
