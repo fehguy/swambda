@@ -1,10 +1,10 @@
 "use strict";
 
 const Swagger = require("swagger-client");
-const Router = require("swagger-router").Router;
 const params = require("./src/params");
 const jsYaml = require("js-yaml");
 const utils = require("./src/utils");
+const Router = require("./src/router").Router;
 
 let container = {
   controllers: "./controllers"
@@ -122,10 +122,10 @@ Swambda.prototype.load = function (identifier) {
         self.spec.basePath = this.prefix;
 
         const router = new Router();
-        router.setTree(router.specToTree(self.spec));
+        router.compilePaths(self.spec.paths);
         self.router = router;
 
-        container.router = self;
+        container.router = router;
         resolve(self);
       })
       .catch((err) => {
