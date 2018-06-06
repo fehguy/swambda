@@ -33,19 +33,13 @@ module.exports.cacheWith = (cache) => {
 
 module.exports.fromCache = () => {
   return new Promise((resolve, reject) => {
-    if(container.router) {
-      resolve(container.router);
+    if(container.swambda) {
+      resolve(container.swambda);
     }
     else {
       reject();
     }
   });
-};
-
-module.exports.cache = (router) => {
-  if(container) {
-    container.router = router;
-  }
 };
 
 const Swambda = module.exports.Swambda = class Swambda {
@@ -110,8 +104,8 @@ Swambda.prototype.cors = function (extra) {
 
 Swambda.prototype.load = function (identifier) {
   return new Promise((resolve, reject) => {
-    if(container.router) {
-      resolve(container.router);
+    if(container.swambda) {
+      resolve(container.swambda);
       return;
     }
     const self = this;
@@ -125,7 +119,7 @@ Swambda.prototype.load = function (identifier) {
         router.compilePaths(self.spec.paths);
         self.router = router;
 
-        container.router = router;
+        container.swambda = self;
         resolve(self);
       })
       .catch((err) => {

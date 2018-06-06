@@ -22,7 +22,7 @@ describe("routing", () => {
       });
   });
 
-  it("routes an valid query parameter", (done) => {
+  it("uses the cache", (done) => {
     let cache = {};
     swambda.cacheWith(cache);
     const event = {
@@ -40,7 +40,15 @@ describe("routing", () => {
           .then((response) => {
             expect(response.statusCode).toBe(200);
             expect(JSON.parse(response.body)).toEqual([{foo: "bar"}]);
-            done();
+            swambda.fromCache()
+              .then((res) => {
+                res.process(event)
+                  .then((response) => {
+                    expect(response.statusCode).toBe(200);
+                    expect(JSON.parse(response.body)).toEqual([{foo: "bar"}]);
+                    done();
+                  })
+              });
           })
           .catch(err => {
             done(err);
