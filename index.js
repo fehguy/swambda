@@ -113,7 +113,14 @@ Swambda.prototype.load = function (identifier) {
     resolveSpec(identifier)
       .then(res => {
         self.spec = res.spec;
-        self.spec.basePath = this.prefix;
+        if(self.spec.swagger) {
+          self.spec.basePath = this.prefix;
+        }
+        else {
+          self.spec.servers = [{
+            url: this.prefix
+          }];
+        }
 
         const router = new Router();
         router.compilePaths(self.spec.paths);
@@ -183,7 +190,15 @@ Swambda.prototype.process = function (event) {
       return;
     }
     let path = event.path;
-    path = path.substring(path.indexOf(this.spec.basePath) + this.spec.basePath.length);
+    let basePath;
+
+    if(this.spec.swagger) {
+      basePath = this.spec.basePath;
+    }
+    else {
+      basePath = this.spec.servers[0].url;
+    }
+    path = path.substring(path.indexOf(basePath) + basePath.length);
 
     const httpMethod = event.httpMethod.toLowerCase();
     if(httpMethod === "options") {
