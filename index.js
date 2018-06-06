@@ -121,6 +121,8 @@ Swambda.prototype.load = function (identifier) {
         self.spec = res.spec;
         self.spec.basePath = this.prefix;
 
+        self.routePaths = compilePaths(self.spec.paths);
+
         const router = new Router();
         router.setTree(router.specToTree(self.spec));
         self.router = router;
@@ -133,6 +135,19 @@ Swambda.prototype.load = function (identifier) {
       })
   });
 };
+
+var compilePaths = function(paths) {
+  const pathNames = Object.keys(paths);
+  const parts = [];
+  pathNames.forEach((v) => {
+    parts.push({
+      path: v,
+      parts: v.split("/"),
+      operation: paths[v]
+    });
+  })
+  return parts;
+}
 
 var resolveSpec = function (identifier) {
   // passed a spec object
@@ -182,6 +197,48 @@ var resolveSpec = function (identifier) {
   });
 }
 
+Swambda.prototype.lookup = function (path) {
+  let operation = undefined;
+  let params = {};
+
+  this.routePaths.forEach((routePath) => {
+    if(path === routePath.path) {
+      operation = routePath.operation;
+      params = {};
+    }
+    if(!operation) {
+      let p = extractFromPath(routePath.path, path);
+      if(Object.keys(p).length !== 0) {
+        operation = routePath.operation;
+        params = p;
+      }
+    }
+  });
+  if(operation) {
+    return {
+      value: operation,
+      params: params
+    };
+  }
+}
+
+let extractFromPath =function (template, value) {
+  const templateArr = template.split("/")
+  const valueArr = value.split("/")
+
+  if(templateArr.length !== valueArr.length) {
+    return {};
+  }
+
+  return templateArr.reduce((obj, part, i) => {
+    if(part.match(/\{.*\}/)) {
+      const name = part.slice(1, -1)
+      obj[name] = valueArr[i]
+    }
+    return obj
+  }, {})
+}
+
 Swambda.prototype.process = function (event) {
   return new Promise((resolve, reject) => {
     if(!event || !event.path) {
@@ -207,7 +264,7 @@ Swambda.prototype.process = function (event) {
       container.respondWith(resolve, 200, this.spec);
       return;
     }
-    const route = this.router.lookup(path);
+    const route = this.lookup(path);
     if(!route) {
       container.respondWith(resolve, 404, {
         code: 404,
