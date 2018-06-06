@@ -28,8 +28,7 @@
   "dependencies": {
     "js-yaml": "^3.12.0",
     "netlify-lambda": "^0.4.0",
-    "swagger-client": "^3.8.6",
-    "swagger-router": "^0.7.1"
+    "swagger-client": "^3.8.6"
   },
   "devDependencies": {
     "expect": "^22.4.3",
