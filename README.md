@@ -206,7 +206,7 @@ const getPetById = exports.getPetById = (args) => {
 }
 ```
 
-Here is a [full example](https://github.com/fehguy/swambda/blob/master/examples/simple.md)
+Here is a [full example](https://github.com/fehguy/swambda/blob/master/examples/README.md)
 
 ### FAQs
 
