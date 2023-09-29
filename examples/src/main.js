@@ -10,7 +10,7 @@ const handler = exports.handler = (event, context, callback) => {
       // not in cache, need to create
 
       // load via webpack yml-loader
-      const swagger = require("yml-loader!./swagger.yaml");
+      const swagger = require("yml-loader!./swagger.yml");
 
       // set the route path
       return new Swambda("/main/.netlify/functions/main")

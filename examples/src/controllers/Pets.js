@@ -4,6 +4,7 @@ const cache = {};
 
 const findAll = exports.findAll = (args) => {
   return new Promise((resolve, reject) => {
+    console.log("findAll")
     let keys = Object.keys(cache);
     if(typeof args.limit !== "undefined") {
       keys = keys.slice(0, args.limit);

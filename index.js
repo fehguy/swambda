@@ -212,6 +212,7 @@ Swambda.prototype.process = function (event) {
       });
       return;
     }
+    console.log(`path: ${path}`)
     if(path === "/swagger.json") {
       container.respondWith(resolve, 200, this.spec);
       return;
