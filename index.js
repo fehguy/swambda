@@ -8,15 +8,29 @@ const Router = require("./src/router").Router;
 
 const fs = require("fs")
 
+var resolver = ((container, path) => {
+    if (typeof container.controllerMap === "undefined") {
+        let p = process.cwd() + `/test/controllers/${path}`;
+        return require(p)
+    }
+    else {
+        let cls = `./${path}.js`;
+        return container.controllerMap(cls);
+    }
+})
+
 let container = {
-    controllers: "./controllers"
+    controllers: "./controllers",
+    controllerResolver: resolver
 };
 
 module.exports.cacheWith = (cache) => {
     const existing = container;
     utils.cacheWith(cache);
     container = cache;
-
+    if (existing.controllerResolver) {
+        container.controllerResolver = existing.controllerResolver;
+    }
     if (existing.controllers) {
         container.controllers = existing.controllers;
     }
@@ -287,7 +301,7 @@ Swambda.prototype.process = function (event) {
                 operationParams[param.name] = param;
             });
 
-        var cls = container.controllerMap(`./${controller}.js`);
+        var cls = container.controllerResolver(container, controller);
         if (!cls || typeof cls[operationId] !== "function") {
             container.respondWith(resolve, 404, {
                 code: 404,

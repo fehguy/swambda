@@ -34,6 +34,10 @@ describe("routing", () => {
     };
     new swambda.Swambda("/api/.netlify/functions/api")
       .controllerDir("test/controllers")
+      // .controllerMap((cls) => {
+      //   let p = process.cwd() + "/test/controllers/Pets";
+      //   return require(p)
+      // })
       .load("./test/specs/simple-v2.yaml")
       .then(router => {
         router.process(event)
