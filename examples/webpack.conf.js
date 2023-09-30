@@ -8,7 +8,7 @@ module.exports = {
     filename: 'main.js'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.yaml$/,
         loader: 'yml-loader',
