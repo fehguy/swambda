@@ -35,13 +35,15 @@ Build the bundle, which goes in `./lambda/main.js`.  This includes all the
 dependencies in `src/node_modules`:
 
 ```
-netlify-lambda build src -c webpack.conf.js
+export NODE_OPTIONS=--openssl-legacy-provider  
+
+netlify-lambda build . -c webpack.conf.js
 ```
 
 Run the code and let `netlify-lambda` watch for changes:
 
 ```
-netlify-lambda serve src -c webpack.conf.js
+netlify-lambda serve . -c webpack.conf.js
 ```
 
 Finally, after running the `serve` command, open your browser to [http://localhost:9000/api/.netlify/functions/api/pets](http://localhost:9000/main/.netlify/functions/main/pets) to see the calling of the `findAll(args)` function.  If a `limit` query param is supplied, it'll be passed in the `args`
