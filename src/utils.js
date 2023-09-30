@@ -41,8 +41,7 @@ module.exports.respondWith = function (resolve, code, body) {
         container.responseInterceptor(response)
             .then((res) => {
                 resolve(res);
-            }
-            );
+            });
     }
     else {
         resolve(response);

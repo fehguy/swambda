@@ -237,6 +237,15 @@ Swambda.prototype.process = function (event) {
             container.respondWith(resolve, 200, this.spec);
             return;
         }
+        if (path === "/openapi.json") {
+            container.respondWith(resolve, 200, this.spec);
+            return;
+        }
+        if (path === "/openapi.yaml") {
+            let yaml = jsYaml.dump(this.spec);
+            container.respondWith(resolve, 200, yaml);
+            return;
+        }
         const route = this.router.lookup(path);
         if (!route) {
             container.respondWith(resolve, 404, {
