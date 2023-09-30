@@ -1,6 +1,6 @@
 # Swambda
 
-[![CircleCI](https://circleci.com/gh/fehguy/swambda.svg?style=svg&circle-token=8bb8ef052ce9e1ad839a2ef4e83519e0599b8e83)](https://circleci.com/gh/fehguy/swambda)
+[![CircleCI](https://circleci.com/gh/fehguy/swambda.svg?style=svg)](https://circleci.com/gh/fehguy/swambda)
 
 Integrate swagger specifications and lambda into an easy-to-use routing tier.
 This package is optimized for use with the [netlify](https://netlify.com) system.
