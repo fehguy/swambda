@@ -14,7 +14,13 @@ module.exports.cacheWith = (cache) => {
     }
 };
 
-module.exports.respondWith = function (resolve, code, body) {
+module.exports.respondTo = (status, entity) => {
+    return new Promise((resolve, _) => {
+        respondWith(resolve, status, entity);
+    })
+}
+
+var respondWith = module.exports.respondWith = function (handler, code, body) {
     const response = {
         statusCode: code,
         headers: {}
@@ -40,10 +46,10 @@ module.exports.respondWith = function (resolve, code, body) {
     if (container.responseInterceptor && typeof container.responseInterceptor === "function") {
         container.responseInterceptor(response)
             .then((res) => {
-                resolve(res);
+                handler(res);
             });
     }
     else {
-        resolve(response);
+        handler(response);
     }
 };
