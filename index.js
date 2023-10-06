@@ -323,6 +323,7 @@ Swambda.prototype.process = function (event) {
             .then((result) => {
                 cls[operationId](args)
                     .then(response => {
+                        console.log("....response")
                         resolve(response);
                     })
                     .catch(err => {
