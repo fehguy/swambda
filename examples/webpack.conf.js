@@ -9,10 +9,10 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.yaml$/,
-                loader: 'yml-loader',
+              test: /\.ya?ml$/,
+              use: 'yaml-loader'
             }
-        ]
+          ]
     },
     optimization: {
         minimize: false

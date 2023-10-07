@@ -10,7 +10,7 @@ const fs = require("fs")
 
 var resolver = ((container, path) => {
     if (typeof container.controllerMap === "undefined") {
-        let p = process.cwd() + `/test/controllers/${path}`;
+        let p = process.cwd() + `/tests/controllers/${path}`;
         return require(p)
     }
     else {
@@ -309,6 +309,18 @@ Swambda.prototype.process = function (event) {
                 }
                 operationParams[param.name] = param;
             });
+
+        if (operation.requestBody && operation.requestBody.content) {
+            const requestBodyJson = operation.requestBody.content["application/json"];
+            if(typeof requestBodyJson !== "undefined") {
+                try {
+                    args["body"] = JSON.parse(event.body);
+                }
+                catch (e) {
+                    args["body"] = event.body;
+                }
+            }
+        }
 
         var cls = container.controllerResolver(container, controller);
         if (!cls || typeof cls[operationId] !== "function") {

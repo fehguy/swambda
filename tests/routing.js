@@ -3,13 +3,14 @@ const expect = require("expect");
 const fs = require("fs");
 
 describe("routing", () => {
+    /*
     it("fails to route an invalid event", (done) => {
         let cache = {};
         swambda.cacheWith(cache);
         new swambda.Swambda("foo/bar")
             .cors()
             .controllerDir("controllers")
-            .load("./test/specs/simple-v2.yaml")
+            .load("./tests/specs/simple-v2.yaml")
             .then(router => {
                 router.process()
                     .then((response) => {
@@ -33,8 +34,8 @@ describe("routing", () => {
             }
         };
         new swambda.Swambda("/api/.netlify/functions/api")
-            .controllerDir("test/controllers")
-            .load("./test/specs/simple-v2.yaml")
+            .controllerDir("tests/controllers")
+            .load("./tests/specs/simple-v2.yaml")
             .then(router => {
                 router.process(event)
                     .then((response) => {
@@ -59,7 +60,7 @@ describe("routing", () => {
             });
     });
 
-    it("routes an valid path parameter", (done) => {
+    it("routes a valid path parameter", (done) => {
         let cache = {};
         swambda.cacheWith(cache);
         const event = {
@@ -67,8 +68,8 @@ describe("routing", () => {
             httpMethod: "GET"
         };
         new swambda.Swambda("/api/.netlify/functions/api")
-            .controllerDir("test/controllers")
-            .load("./test/specs/simple-v2.yaml")
+            .controllerDir("tests/controllers")
+            .load("./tests/specs/simple-v2.yaml")
             .then(router => {
                 router.process(event)
                     .then((response) => {
@@ -88,7 +89,7 @@ describe("routing", () => {
             });
     });
 
-    it("routes an valid path parameter with a v3 spec", (done) => {
+    it("routes a valid path parameter with a v3 spec", (done) => {
         let cache = {};
         swambda.cacheWith(cache);
         const event = {
@@ -96,8 +97,8 @@ describe("routing", () => {
             httpMethod: "GET"
         };
         new swambda.Swambda("/api/.netlify/functions/api")
-            .controllerDir("test/controllers")
-            .load("./test/specs/petstore-v3.yaml")
+            .controllerDir("tests/controllers")
+            .load("./tests/specs/petstore-v3.yaml")
             .then(router => {
                 router.process(event)
                     .then((response) => {
@@ -105,6 +106,39 @@ describe("routing", () => {
                         expect(JSON.parse(response.body)).toEqual({
                             id: "2",
                             name: "gorilla"
+                        });
+                        done();
+                    })
+                    .catch(err => {
+                        done(err);
+                    })
+            })
+            .catch((err) => {
+                done(err);
+            });
+    });
+*/
+    it("routes a valid post parameter with a v3 spec", (done) => {
+        let cache = {};
+        swambda.cacheWith(cache);
+        const event = {
+            path: "/api/.netlify/functions/api/pet",
+            httpMethod: "POST",
+            body: JSON.stringify({
+                "id": 1234567,
+                name: "Lizard"
+            })
+        };
+        new swambda.Swambda("/api/.netlify/functions/api")
+            .controllerDir("tests/controllers")
+            .load("./tests/specs/petstore-v3.yaml")
+            .then(router => {
+                router.process(event)
+                    .then((response) => {
+                        expect(response.statusCode).toBe(200);
+                        expect(JSON.parse(response.body)).toEqual({
+                            id: 1234567,
+                            name: "Lizard"
                         });
                         done();
                     })

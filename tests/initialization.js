@@ -23,7 +23,7 @@ describe("initalization", () => {
     it("loads a simple spec object", (done) => {
         let cache = {};
         swambda.cacheWith(cache);
-        const spec = JSON.parse(fs.readFileSync("./test/specs/simple-v2.json"));
+        const spec = JSON.parse(fs.readFileSync("./tests/specs/simple-v2.json"));
 
         new swambda.Swambda("foo/bar")
             .cors()
@@ -43,7 +43,7 @@ describe("initalization", () => {
         swambda.cacheWith(cache);
         new swambda.Swambda("foo/bar")
             .cors()
-            .load("./test/specs/simple-v2.json")
+            .load("./tests/specs/simple-v2.json")
             .then(router => {
                 expect(router.prefix).toBe("foo/bar");
                 expect(router.spec).toBeDefined();
@@ -59,7 +59,7 @@ describe("initalization", () => {
         swambda.cacheWith(cache);
         new swambda.Swambda("foo/bar")
             .cors()
-            .load("./test/specs/simple-v2.yaml")
+            .load("./tests/specs/simple-v2.yaml")
             .then(router => {
                 expect(router.prefix).toBe("foo/bar");
                 expect(router.spec).toBeDefined();

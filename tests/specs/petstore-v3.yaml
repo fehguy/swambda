@@ -35,6 +35,7 @@ paths:
       summary: Add a new pet to the store
       description: ''
       operationId: addPet
+      x-swagger-router-controller: Pets
       responses:
         '405':
           description: Invalid input
@@ -50,6 +51,7 @@ paths:
       summary: Update an existing pet
       description: ''
       operationId: updatePet
+      x-swagger-router-controller: Pets
       responses:
         '400':
           description: Invalid ID supplied
@@ -70,6 +72,7 @@ paths:
       summary: Finds Pets by status
       description: Multiple status values can be provided with comma separated strings
       operationId: findPetsByStatus
+      x-swagger-router-controller: Pets
       parameters:
       - name: status
         in: query
@@ -113,6 +116,7 @@ paths:
       description: Muliple tags can be provided with comma separated strings. Use
         tag1, tag2, tag3 for testing.
       operationId: findPetsByTags
+      x-swagger-router-controller: Pets
       parameters:
       - name: tags
         in: query
@@ -182,6 +186,7 @@ paths:
       summary: Updates a pet in the store with form data
       description: ''
       operationId: updatePetWithForm
+      x-swagger-router-controller: Pets
       parameters:
       - name: petId
         in: path
@@ -215,6 +220,7 @@ paths:
       summary: Deletes a pet
       description: ''
       operationId: deletePet
+      x-swagger-router-controller: Pets
       parameters:
       - name: api_key
         in: header
@@ -244,6 +250,7 @@ paths:
       summary: uploads an image
       description: ''
       operationId: uploadFile
+      x-swagger-router-controller: Pets
       parameters:
       - name: petId
         in: path
@@ -276,6 +283,7 @@ paths:
       summary: Returns pet inventories by status
       description: Returns a map of status codes to quantities
       operationId: getInventory
+      x-swagger-router-controller: Pets
       responses:
         '200':
           description: successful operation
@@ -295,6 +303,7 @@ paths:
       summary: Place an order for a pet
       description: ''
       operationId: placeOrder
+      x-swagger-router-controller: Pets
       responses:
         '200':
           description: successful operation
@@ -322,6 +331,7 @@ paths:
       description: For valid response try integer IDs with value >= 1 and <= 10. Other
         values will generated exceptions
       operationId: getOrderById
+      x-swagger-router-controller: Pets
       parameters:
       - name: orderId
         in: path
@@ -353,6 +363,7 @@ paths:
       description: For valid response try integer IDs with positive integer value.
         Negative or non-integer values will generate API errors
       operationId: deleteOrder
+      x-swagger-router-controller: Pets
       parameters:
       - name: orderId
         in: path
@@ -374,6 +385,7 @@ paths:
       summary: Create user
       description: This can only be done by the logged in user.
       operationId: createUser
+      x-swagger-router-controller: Pets
       responses:
         default:
           description: successful operation
@@ -391,6 +403,7 @@ paths:
       summary: Creates list of users with given input array
       description: ''
       operationId: createUsersWithArrayInput
+      x-swagger-router-controller: Pets
       responses:
         default:
           description: successful operation
@@ -403,6 +416,7 @@ paths:
       summary: Creates list of users with given input array
       description: ''
       operationId: createUsersWithListInput
+      x-swagger-router-controller: Pets
       responses:
         default:
           description: successful operation
@@ -415,6 +429,7 @@ paths:
       summary: Logs user into the system
       description: ''
       operationId: loginUser
+      x-swagger-router-controller: Pets
       parameters:
       - name: username
         in: query
@@ -458,6 +473,7 @@ paths:
       summary: Logs out current logged in user session
       description: ''
       operationId: logoutUser
+      x-swagger-router-controller: Pets
       responses:
         default:
           description: successful operation
@@ -468,6 +484,7 @@ paths:
       summary: Get user by user name
       description: ''
       operationId: getUserByName
+      x-swagger-router-controller: Pets
       parameters:
       - name: username
         in: path
@@ -495,6 +512,7 @@ paths:
       summary: Updated user
       description: This can only be done by the logged in user.
       operationId: updateUser
+      x-swagger-router-controller: Pets
       parameters:
       - name: username
         in: path
@@ -520,6 +538,7 @@ paths:
       summary: Delete user
       description: This can only be done by the logged in user.
       operationId: deleteUser
+      x-swagger-router-controller: Pets
       parameters:
       - name: username
         in: path

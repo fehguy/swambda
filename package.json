@@ -28,11 +28,10 @@
   "dependencies": {
     "js-yaml": "^3.12.0",
     "netlify-lambda": "^0.4.0",
-    "swagger-client": "3.8.6"
+    "swagger-client": "3.23.0"
   },
   "devDependencies": {
     "expect": "^22.4.3",
-    "mocha": "^5.1.1",
-    "yml-loader": "^2.1.0"
+    "mocha": "^5.1.1"
   }
 }
