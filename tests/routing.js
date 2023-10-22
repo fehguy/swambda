@@ -3,7 +3,6 @@ const expect = require("expect");
 const fs = require("fs");
 
 describe("routing", () => {
-    /*
     it("fails to route an invalid event", (done) => {
         let cache = {};
         swambda.cacheWith(cache);
@@ -117,7 +116,7 @@ describe("routing", () => {
                 done(err);
             });
     });
-*/
+
     it("routes a valid post parameter with a v3 spec", (done) => {
         let cache = {};
         swambda.cacheWith(cache);

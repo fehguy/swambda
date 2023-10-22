@@ -1,6 +1,6 @@
 {
   "name": "swambda",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "A library for materializing an OpenAPI specification in an AWS Lambda-type environment.",
   "main": "index.js",
   "keywords": [
@@ -26,11 +26,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "js-yaml": "^3.12.0",
     "netlify-lambda": "^0.4.0",
-    "swagger-client": "3.23.0"
+    "swagger-client": "3.18.4"
   },
   "devDependencies": {
+    "js-yaml": "^3.12.0",
     "expect": "^22.4.3",
     "mocha": "^5.1.1"
   }
