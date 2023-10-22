@@ -9,7 +9,7 @@ describe("routing", () => {
         new swambda.Swambda("foo/bar")
             .cors()
             .controllerDir("controllers")
-            .load("./tests/specs/simple-v2.yaml")
+            .load("./test/specs/simple-v2.yaml")
             .then(router => {
                 router.process()
                     .then((response) => {
@@ -33,8 +33,8 @@ describe("routing", () => {
             }
         };
         new swambda.Swambda("/api/.netlify/functions/api")
-            .controllerDir("tests/controllers")
-            .load("./tests/specs/simple-v2.yaml")
+            .controllerDir("test/controllers")
+            .load("./test/specs/simple-v2.yaml")
             .then(router => {
                 router.process(event)
                     .then((response) => {
@@ -67,8 +67,8 @@ describe("routing", () => {
             httpMethod: "GET"
         };
         new swambda.Swambda("/api/.netlify/functions/api")
-            .controllerDir("tests/controllers")
-            .load("./tests/specs/simple-v2.yaml")
+            .controllerDir("test/controllers")
+            .load("./test/specs/simple-v2.yaml")
             .then(router => {
                 router.process(event)
                     .then((response) => {
@@ -96,8 +96,8 @@ describe("routing", () => {
             httpMethod: "GET"
         };
         new swambda.Swambda("/api/.netlify/functions/api")
-            .controllerDir("tests/controllers")
-            .load("./tests/specs/petstore-v3.yaml")
+            .controllerDir("test/controllers")
+            .load("./test/specs/petstore-v3.yaml")
             .then(router => {
                 router.process(event)
                     .then((response) => {
@@ -129,8 +129,8 @@ describe("routing", () => {
             })
         };
         new swambda.Swambda("/api/.netlify/functions/api")
-            .controllerDir("tests/controllers")
-            .load("./tests/specs/petstore-v3.yaml")
+            .controllerDir("test/controllers")
+            .load("./test/specs/petstore-v3.yaml")
             .then(router => {
                 router.process(event)
                     .then((response) => {
