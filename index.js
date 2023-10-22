@@ -10,7 +10,7 @@ const fs = require("fs")
 
 var resolver = ((container, path) => {
     if (typeof container.controllerMap === "undefined") {
-        let p = process.cwd() + `/tests/controllers/${path}`;
+        let p = process.cwd() + `/test/controllers/${path}`;
         return require(p)
     }
     else {
