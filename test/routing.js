@@ -59,7 +59,7 @@ describe("routing", () => {
             });
     });
 
-    it("routes an valid path parameter", (done) => {
+    it("routes a valid path parameter", (done) => {
         let cache = {};
         swambda.cacheWith(cache);
         const event = {
@@ -88,7 +88,7 @@ describe("routing", () => {
             });
     });
 
-    it("routes an valid path parameter with a v3 spec", (done) => {
+    it("routes a valid path parameter with a v3 spec", (done) => {
         let cache = {};
         swambda.cacheWith(cache);
         const event = {
@@ -105,6 +105,39 @@ describe("routing", () => {
                         expect(JSON.parse(response.body)).toEqual({
                             id: "2",
                             name: "gorilla"
+                        });
+                        done();
+                    })
+                    .catch(err => {
+                        done(err);
+                    })
+            })
+            .catch((err) => {
+                done(err);
+            });
+    });
+
+    it("routes a valid post parameter with a v3 spec", (done) => {
+        let cache = {};
+        swambda.cacheWith(cache);
+        const event = {
+            path: "/api/.netlify/functions/api/pet",
+            httpMethod: "POST",
+            body: JSON.stringify({
+                "id": 1234567,
+                name: "Lizard"
+            })
+        };
+        new swambda.Swambda("/api/.netlify/functions/api")
+            .controllerDir("test/controllers")
+            .load("./test/specs/petstore-v3.yaml")
+            .then(router => {
+                router.process(event)
+                    .then((response) => {
+                        expect(response.statusCode).toBe(200);
+                        expect(JSON.parse(response.body)).toEqual({
+                            id: 1234567,
+                            name: "Lizard"
                         });
                         done();
                     })
