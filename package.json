@@ -1,6 +1,6 @@
 {
   "name": "swambda",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "A library for materializing an OpenAPI specification in an AWS Lambda-type environment.",
   "main": "index.js",
   "keywords": [
